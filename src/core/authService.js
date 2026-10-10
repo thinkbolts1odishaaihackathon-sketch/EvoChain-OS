@@ -5,6 +5,11 @@
  * Signed Cryptographic JWT Sessions, and Instant 1-Click Demo Profiles.
  */
 
+// Production Render Backend URL (hardcoded default for seamless Vercel deployment)
+export const BACKEND_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL) 
+  ? import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, '') 
+  : 'https://evochain-os.onrender.com';
+
 // Production-grade Enterprise Preset Profiles for Zero-Friction Demo
 export const PRESET_USERS = [
   {
@@ -519,7 +524,7 @@ class AuthService {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 800);
-      const res = await fetch('http://localhost:8000/api/auth/passkey-verify', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/passkey-verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profile_id: targetUser.id, user_id: targetUser.id }),
@@ -563,7 +568,7 @@ class AuthService {
   // Fetch PostgreSQL connection telemetry
   async getDatabaseStatus() {
     try {
-      const res = await fetch('http://localhost:8000/api/system/database-status');
+      const res = await fetch(`${BACKEND_URL}/api/system/database-status`);
       if (res.ok) {
         return await res.json();
       }
@@ -590,7 +595,7 @@ class AuthService {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
-      const res = await fetch('http://localhost:8000/api/auth/register', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -662,7 +667,7 @@ class AuthService {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 1500);
-      const res = await fetch('http://localhost:8000/api/auth/login', {
+      const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -779,7 +784,7 @@ class AuthService {
     try {
       const token = this.getBearerToken();
       if (token) {
-        fetch('http://localhost:8000/api/auth/logout', {
+        fetch(`${BACKEND_URL}/api/auth/logout`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` }
         }).catch(() => {});
@@ -799,7 +804,7 @@ class AuthService {
   async getAuditLogs(limit = 50) {
     try {
       const token = this.getBearerToken();
-      const res = await fetch(`http://localhost:8000/api/security/audit-logs?limit=${limit}`, {
+      const res = await fetch(`${BACKEND_URL}/api/security/audit-logs?limit=${limit}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
@@ -816,7 +821,7 @@ class AuthService {
   // Verify SHA-256 hash chain integrity
   async verifyAuditChain() {
     try {
-      const res = await fetch('http://localhost:8000/api/security/verify-chain');
+      const res = await fetch(`${BACKEND_URL}/api/security/verify-chain`);
       if (res.ok) {
         return await res.json();
       }
@@ -837,7 +842,7 @@ class AuthService {
   // Get active security engine status
   async getSecurityStatus() {
     try {
-      const res = await fetch('http://localhost:8000/api/security/status');
+      const res = await fetch(`${BACKEND_URL}/api/security/status`);
       if (res.ok) {
         return await res.json();
       }
@@ -858,7 +863,7 @@ class AuthService {
   // Get PostgreSQL database connectivity and hosting status
   async getDatabaseStatus() {
     try {
-      const res = await fetch('http://localhost:8000/api/system/database-status');
+      const res = await fetch(`${BACKEND_URL}/api/system/database-status`);
       if (res.ok) {
         return await res.json();
       }
